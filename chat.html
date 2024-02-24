@@ -1,45 +1,294 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Chat Tiburoncín</title>
-</head>
-<body id="theme-body">
-  <script type="application/javascript">
-    document.addEventListener("DOMContentLoaded", function () {
-      // Inicialización de estilos
-      var style = document.createElement("style");
-      style.innerHTML = `...`; // Aquí va el CSS
-      document.head.appendChild(style);
+  <head>
+    <title>Chat Tiburoncín</title>
+  </head>
+  <body id="theme-body">
+    <script type="application/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const chatHeader = document.createElement("div");
+        chatHeader.className = "chat-header";
 
-    const chatHeader = document.createElement("div");
-    chatHeader.className = "chat-header";
-    // ...continuar con la creación y configuración de elementos...
-    document.body.appendChild(chatHeader);
-    // ...continuar añadiendo elementos al DOM...
+        const themeSwitcher = document.createElement("button");
+        themeSwitcher.id = "theme-switcher";
+        themeSwitcher.className = "theme-switcher";
+        themeSwitcher.textContent = "Cambiar de tema";
 
-    function toggleTheme() {
-    document.body.classList.toggle("light-theme");
-    document.body.classList.toggle("dark-theme");
-    // Guardar preferencia de tema
-    }
-    themeSwitcher.addEventListener("click", toggleTheme);
-    // Cargar tema guardado al iniciar
+        chatHeader.appendChild(themeSwitcher);
 
-    const getMessages = async () => {
-  // Lógica para obtener y mostrar mensajes
-    };
-    getMessages(); // Llamada inicial
-    setInterval(getMessages, 5000); // Refresco automático
-    // Dentro de DOMContentLoaded
-    input.addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        postMessage();
-    }
-    });
-    sendButton.addEventListener("click", postMessage);
+        const chatTitle = document.createTextNode(" Chat Tiburoncin");
+        chatHeader.appendChild(chatTitle);
 
-    });
-  </script>
-</body>
+        const messageList = document.createElement("ul");
+        messageList.id = "message-list";
+        messageList.className = "messages";
+
+        const chatInput = document.createElement("div");
+        chatInput.className = "chat-input";
+
+        const messageInput = document.createElement("textarea");
+        messageInput.id = "message-input";
+        messageInput.setAttribute("maxlength", "140");
+
+        const sendButton = document.createElement("button");
+        sendButton.id = "send-button";
+        sendButton.textContent = "SEND";
+
+        chatInput.appendChild(messageInput);
+        chatInput.appendChild(sendButton);
+
+        document.body.appendChild(chatHeader);
+        document.body.appendChild(messageList);
+        document.body.appendChild(chatInput);
+
+        var style = document.createElement("style");
+        style.innerHTML = `
+        @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+        body {
+          font-family: "Lato", sans-serif;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          background-color: #dde6ed;
+        }
+        .chat-header {
+          background-color: #424769;
+          color: white;
+          padding: 20px;
+          text-align: center;
+          font-size: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          flex: 1;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+        li {
+          margin: 10px;
+          padding: 10px;
+          border-radius: 10px;
+          display: inline-block;
+          white-space: pre-wrap;
+          word-break: break-word;
+          white-space: normal;
+        }
+        li strong {
+          font-weight: bold;
+        }
+
+        li span {
+          font-weight: normal;
+        }
+
+        .user-message {
+          background-color: #98abee;
+          align-self: flex-end;
+          border: none;
+        }
+        .server-message {
+          background-color: #ffffff;
+          align-self: flex-start;
+          border: none;
+        }
+        .chat-input {
+          display: flex;
+          padding: 10px;
+          background-color: #f2f2f2;
+        }
+        textarea {
+          font-family: "Lato";
+          flex: 1;
+          padding: 10px;
+          margin-right: 10px;
+          border-radius: 20px;
+          border: 1px solid #ccc;
+          padding: 15px;
+          line-height: 1;
+        }
+        button {
+          padding: 10px 20px;
+          border-radius: 10px;
+          border: none;
+          background-color: #c2d9ff;
+          color: black;
+          cursor: pointer;
+        }
+
+        /* Tema claro */
+        .light-theme {
+          background-color: #dde6ed;
+        }
+
+        .light-theme .user-message {
+          background-color: #98abee;
+        }
+
+        .light-theme .server-message {
+          background-color: white;
+        }
+
+        .dark-theme {
+          background-color: #818fb4;
+        }
+
+        .dark-theme .user-message {
+          background-color: #98abee;
+          color: white;
+        }
+
+        .dark-theme .server-message {
+          background-color: #535c91;
+          color: white;
+        }
+        `;
+
+        document.head.appendChild(style);
+
+        var name = "Nahomy";
+        const ul = document.getElementById("message-list");
+        const input = document.getElementById("message-input");
+
+        const body = document.getElementById("theme-body");
+
+        function toggleTheme() {
+          document.body.classList.toggle("light-theme");
+          document.body.classList.toggle("dark-theme");
+        }
+        const currentTheme = body.classList.contains("dark-theme")
+          ? "dark"
+          : "light";
+        localStorage.setItem("themePreference", currentTheme);
+
+        themeSwitcher.addEventListener("click", toggleTheme);
+
+        const savedTheme = localStorage.getItem("themePreference");
+        if (savedTheme === "dark") {
+          body.classList.add("dark-theme");
+        } else {
+          body.classList.add("light-theme");
+        }
+        function findImageUrls(text) {
+          const urlRegex = /https?:\/\/\S+\.(jpg|jpeg|png|gif)/g;
+          const urls = text.match(urlRegex);
+          return urls || [];
+        }
+
+        const getMessages = async () => {
+          try {
+            const response = await fetch(
+              "https://chat.tiburoncin.lat/messages"
+            );
+
+            const messages = await response.json();
+
+            const atBottom =
+              ul.scrollHeight - ul.clientHeight <= ul.scrollTop + 1;
+
+            ul.innerHTML = "";
+
+            const urlRegex = /https?:\/\/\S+\.(jpg|jpeg|png|gif)/g;
+
+            messages.reverse().forEach((messageData) => {
+              const { username, message, timestamp } = messageData; //desconstruccion de objetos
+
+              const li = document.createElement("li");
+              li.classList.add(
+                messageData.username === name
+                  ? "user-message"
+                  : "server-message"
+              );
+
+              const date = timestamp ? new Date(timestamp) : new Date();
+              const timeString = date.toLocaleTimeString();
+
+              const userName = document.createElement("span");
+              userName.textContent = username + ": ";
+              userName.style.fontWeight = "bold";
+
+              const timeSpan = document.createElement("span");
+              timeSpan.innerText = ` at ${timeString}`;
+              timeSpan.style.fontSize = "0.8em";
+              timeSpan.style.marginLeft = "10px";
+
+              const headerDiv = document.createElement("div");
+              headerDiv.appendChild(userName);
+              headerDiv.appendChild(timeSpan);
+
+              const imageUrls = message.match(urlRegex);
+              const textWithoutUrls = message.replace(urlRegex, "");
+
+              const messageText = document.createElement("div");
+              messageText.textContent = textWithoutUrls;
+              messageText.style.marginTop = "5px";
+
+              li.appendChild(headerDiv);
+              li.appendChild(messageText);
+
+              imageUrls &&
+                imageUrls.forEach((url) => {
+                  const img = document.createElement("img");
+                  img.src = url;
+                  img.style.maxWidth = "200px";
+                  img.style.marginTop = "10px";
+                  li.appendChild(img);
+                });
+
+              ul.appendChild(li);
+
+              if (atBottom) {
+                ul.scrollTop = ul.scrollHeight;
+              }
+            });
+          } catch (error) {
+            console.error("Hubo un problema con la petición fecth:", error);
+          }
+        };
+
+        const postMessage = async () => {
+          if (input.value.trim() === "") {
+            return;
+          }
+
+          const body = {
+            username: "Nahomy",
+            message: input.value,
+          };
+
+          const response = await fetch("https://chat.tiburoncin.lat/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+
+          await getMessages();
+          input.value = "";
+        };
+
+        input.addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            postMessage();
+          }
+        });
+
+        sendButton.addEventListener("click", postMessage);
+
+        setInterval(getMessages, 5000);
+
+        getMessages();
+      });
+    </script>
+  </body>
 </html>
