@@ -30,6 +30,15 @@
     };
     getMessages(); // Llamada inicial
     setInterval(getMessages, 5000); // Refresco automático
+    // Dentro de DOMContentLoaded
+    input.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        postMessage();
+    }
+    });
+    sendButton.addEventListener("click", postMessage);
+
     });
   </script>
 </body>
